@@ -58,4 +58,380 @@ input[type=range]{width:100%;accent-color:#0A0A0A;height:24px}
 .finenote{font-size:11.5px;color:var(--muted);margin:2px 0 12px}
 
 /* results */
-.hero{background:var(--navy);color:#fff;border-radius:var(--radius)
+.hero{background:var(--navy);color:#fff;border-radius:var(--radius);padding:24px 26px;margin-bottom:20px;position:relative;overflow:hidden}
+.hero::before{content:"";position:absolute;left:0;top:0;bottom:0;width:5px;background:var(--gold)}
+.hrow{display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px}
+@media(max-width:640px){.hrow{grid-template-columns:1fr}}
+.hcell .l{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#8F8F8F}
+.hcell .v{font-family:'Helvetica Neue',Inter,'Segoe UI',Arial,sans-serif;font-size:36px;font-weight:700;color:var(--gold);line-height:1.15}
+.hcell .v small{font-size:16px;color:#D2D2D2;font-weight:400}
+.hcell .s{font-size:12.5px;color:#D2D2D2;margin-top:2px}
+.mult{font-family:'Helvetica Neue',Inter,'Segoe UI',Arial,sans-serif}
+
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:20px;margin-bottom:20px}
+.card h3{font-size:17px;color:var(--navy);margin-bottom:3px}
+.card .ph{font-size:12.5px;color:var(--muted);margin-bottom:14px}
+
+/* stacked bars */
+.sbar{margin-bottom:14px}
+.sbar .t{display:flex;justify-content:space-between;font-size:13px;font-weight:700;color:var(--navy);margin-bottom:5px}
+.sbar .t span:last-child{font-family:'Helvetica Neue',Inter,'Segoe UI',Arial,sans-serif;color:var(--blue)}
+.stk{display:flex;height:26px;border-radius:6px;overflow:hidden;background:#F0F0F0}
+.stk div{height:100%;transition:width .3s ease;min-width:0}
+.k-cached{background:#CFCFCF}.k-fresh{background:var(--touch-a)}.k-think{background:var(--touch-c)}.k-out{background:#0A0A0A}
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin-top:10px}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{width:10px;height:10px;border-radius:3px;display:inline-block}
+
+#chart{width:100%;height:auto;display:block}
+
+/* recommendations */
+.rec{display:flex;gap:14px;align-items:flex-start;padding:12px 0;border-top:1px dashed var(--line)}
+.rec:first-of-type{border-top:none}
+.rec .save{flex:none;font-family:'Helvetica Neue',Inter,'Segoe UI',Arial,sans-serif;font-weight:700;font-size:18px;color:var(--green);min-width:86px;text-align:right}
+.rec .save.zero{color:#C4C4C4}
+.rec .rn{font-weight:700;color:var(--navy);font-size:14px}
+.rec .rd{font-size:12.5px;color:var(--muted)}
+.rec.done .rn::after{content:" ✓ applied";color:var(--green);font-size:12px}
+
+footer{background:#000000;color:#9A9A9A;font-size:12.5px;padding:26px 0;margin-top:8px}
+footer a{color:#D2D2D2}
+footer .wrap{display:flex;flex-direction:column;gap:5px}
+@media (prefers-reduced-motion: reduce){*{transition:none !important}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <div class="eyebrow">The Stack Above the Stack · Design Workbench</div>
+    <h1>The Token Ledger: price your traffic shape before you build it</h1>
+    <p>Every application-layer choice — context ordering, tool-result discipline, compaction, decomposition, effort budgets, routing — lands as a serving-stack bill. Shape a workload on the left; the ledger prices it against the naive build of the same solution. Physics per Bahree's <i>Stack Below the Stack</i>; workload patterns per aiTouch's Sophia.</p>
+  </div>
+</header>
+
+<main>
+<div class="wrap grid">
+
+  <!-- ================= LEFT: DESIGN ================= -->
+  <div>
+    <div class="panel">
+      <h3>Workload shape</h3>
+      <div class="ph">The session you are designing — an agent loop, tool rounds, outputs.</div>
+      <div class="ctrl">
+        <label>Tool rounds per session <output id="oT">10</output></label>
+        <input type="range" id="sT" min="1" max="30" step="1" value="10">
+      </div>
+      <div class="ctrl">
+        <label>System + task prompt <output id="oS">2.0K tok</output></label>
+        <input type="range" id="sS" min="500" max="8000" step="100" value="2000">
+      </div>
+      <div class="ctrl">
+        <label>Tool result per round <output id="oR">2.0K tok</output></label>
+        <input type="range" id="sR" min="200" max="6000" step="100" value="2000">
+        <div class="why">Every tool result is prefill cost plus KV rent for the rest of the session.</div>
+      </div>
+      <div class="ctrl">
+        <label>Visible output per round <output id="oA">300 tok</output></label>
+        <input type="range" id="sA" min="50" max="1500" step="25" value="300">
+        <div class="why">Output tokens price at roughly 3–5× input — brevity is a cost lever.</div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h3>Context architecture</h3>
+      <div class="ph">The choices that set your prefix-cache hit rate.</div>
+      <div class="tgl">
+        <button class="switch on" id="tOrder" role="switch" aria-checked="true"></button>
+        <div><div class="tn">Stable-prefix ordering, append-only</div>
+        <div class="td">Stable content first; never mutate early tokens (no timestamps at the top). One mutated byte re-prefills everything after it.</div></div>
+      </div>
+      <div class="tgl">
+        <button class="switch on" id="tAff" role="switch" aria-checked="true"></button>
+        <div><div class="tn">Session affinity (KV pinning)</div>
+        <div class="td">Turns land on the worker holding the session's blocks — or the provider's cache actually gets hit.</div></div>
+      </div>
+      <div class="tgl">
+        <button class="switch" id="tComp" role="switch" aria-checked="false"></button>
+        <div><div class="tn">History compaction</div>
+        <div class="td">Above 16K, compact history to 40% — superseded plans and stale tool output summarised away. A product decision about what the agent may forget; each compaction pays one fresh re-prefill of the rewritten context.</div></div>
+      </div>
+      <div class="tgl">
+        <button class="switch" id="tDec" role="switch" aria-checked="false"></button>
+        <div><div class="tn">Decompose to subagents</div>
+        <div class="td">Split the rounds across 4 isolated subagent contexts reporting 300-token summaries to a thin orchestrator — linear instead of context-times-turns.</div></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h3>Budgets</h3>
+      <div class="ph">Effort and sampling — the dials that multiply decode.</div>
+      <div class="ctrl">
+        <label>Reasoning effort (thinking tokens / round)</label>
+        <div class="segs" id="effSegs">
+          <button class="seg" data-v="0">none</button>
+          <button class="seg on" data-v="1024">1K low</button>
+          <button class="seg" data-v="4096">4K med</button>
+          <button class="seg" data-v="8192">8K high</button>
+        </div>
+        <div class="why" style="margin-top:6px">Default low, escalate on a verifier or gate signal — accuracy improves much less than linearly with budget.</div>
+      </div>
+      <div class="ctrl">
+        <label>Best-of-k on hard rounds <output id="oK">off</output></label>
+        <input type="range" id="sK" min="1" max="5" step="1" value="1">
+        <div class="why">Applied to 20% of rounds; multiplies their thinking + output by k.</div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h3>Routing & pricing</h3>
+      <div class="ph">IInferenceRouter: right-size the model per round. Prices are illustrative defaults per MTok — edit to your provider.</div>
+      <div class="ctrl">
+        <label>Rounds routed to small model <output id="oRt">30%</output></label>
+        <input type="range" id="sRt" min="0" max="90" step="5" value="30">
+      </div>
+      <div class="prices">
+        <div class="pc"><div class="l">Frontier in</div><input type="number" id="pFi" value="3.00" step="0.25" min="0"></div>
+        <div class="pc"><div class="l">cached in</div><input type="number" id="pFc" value="0.30" step="0.05" min="0"></div>
+        <div class="pc"><div class="l">out</div><input type="number" id="pFo" value="15.00" step="0.5" min="0"></div>
+        <div class="pc"><div class="l">Small in</div><input type="number" id="pSi" value="0.25" step="0.05" min="0"></div>
+        <div class="pc"><div class="l">cached in</div><input type="number" id="pSc" value="0.03" step="0.01" min="0"></div>
+        <div class="pc"><div class="l">out</div><input type="number" id="pSo" value="1.25" step="0.25" min="0"></div>
+      </div>
+      <div class="finenote">$ / million tokens. Cached-input discounts exist because loading KVs beats recomputing them — the t<sub>mem</sub> vs t<sub>compute</sub> split, on the price sheet.</div>
+    </div>
+  </div>
+
+  <!-- ================= RIGHT: LEDGER ================= -->
+  <div>
+    <div class="hero">
+      <div class="hrow">
+        <div class="hcell">
+          <div class="l">Your design</div>
+          <div class="v" id="hCost">$0.31<small> /session</small></div>
+          <div class="s" id="hCost2">$310 per 1,000 sessions</div>
+        </div>
+        <div class="hcell">
+          <div class="l">Naive build of the same solution</div>
+          <div class="v" style="color:#B3B3B3" id="hNaive">$2.87<small> /session</small></div>
+          <div class="s">unordered context · no compaction · high effort · frontier-only · monolith</div>
+        </div>
+        <div class="hcell">
+          <div class="l">Design dividend</div>
+          <div class="v mult" id="hMult">9.3×</div>
+          <div class="s" id="hSaved">$2,560 saved per 1,000 sessions</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Where the tokens go</h3>
+      <div class="ph">Per session. Grey is nearly free; the coloured and black segments are the expensive decode.</div>
+      <div class="sbar">
+        <div class="t"><span>Your design</span><span id="bDlab"></span></div>
+        <div class="stk" id="bD"></div>
+      </div>
+      <div class="sbar">
+        <div class="t"><span>Naive build</span><span id="bNlab"></span></div>
+        <div class="stk" id="bN"></div>
+      </div>
+      <div class="legend">
+        <span><i class="k-cached"></i> cached input (prefix hits)</span>
+        <span><i class="k-fresh"></i> fresh input (prefill)</span>
+        <span><i class="k-think"></i> thinking tokens</span>
+        <span><i class="k-out"></i> visible output</span>
+      </div>
+      <div class="finenote" style="margin-top:10px">Peak context <b id="pk1">22K</b> tokens ≈ <b id="pk2">7.0 GB</b> KV at the ~320 KB/token GQA-70B figure (MLA-class models hold ~7% of that) — the HBM this one session occupies while it runs, or squats on during a slow tool call.</div>
+    </div>
+
+    <div class="card">
+      <h3>Cost as the session runs</h3>
+      <div class="ph">Cumulative $ per session by round. Losing the cache turns the dashed naive curve quadratic; your design should stay near-linear.</div>
+      <svg id="chart" viewBox="0 0 980 330" role="img" aria-label="Cumulative cost per round, designed versus naive"></svg>
+    </div>
+
+    <div class="card">
+      <h3>Ranked: your next design move</h3>
+      <div class="ph">Each lever priced from your current configuration — estimated saving per session if applied.</div>
+      <div id="recs"></div>
+    </div>
+  </div>
+</div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div>Physics and serving-stack framing: <a href="https://blog.desigeek.com/post/2026/08/llm-inference-stack-part3-serving-at-scale/">Amit Bahree, "The Stack Below the Stack" (Parts 1–3, Aug 2026)</a> — prefix caching, KV economics, effort-as-decode, cached-input pricing. Cost model is illustrative and provider-agnostic; edit prices to yours.</div>
+    <div>The Token Ledger · Intelligent Touch Solutions Ltd · A "Stack Above the Stack" companion — traffic shape isn't weather; it's designed.</div>
+  </div>
+</footer>
+
+<script>
+/* ---------- state ---------- */
+const $=id=>document.getElementById(id);
+const state={
+  T:10,S:2000,R:2000,A:300,
+  order:true,aff:true,comp:false,dec:false,
+  think:1024,k:1,route:0.30,
+  pF:{i:3.00,c:0.30,o:15.00},pS:{i:0.25,c:0.03,o:1.25}
+};
+const COMP_CAP=16000, COMP_KEEP=0.4, HARD_FRAC=0.20, NSUB=4, SUM=300, SSUB=800, AORCH=200;
+
+/* ---------- cost engine ---------- */
+function hitRate(order,aff){return order? (aff?0.95:0.35) : 0.02;}
+function prices(st){ // blended by routing fraction
+  const r=st.route;
+  return {
+    i:(1-r)*st.pF.i + r*st.pS.i,
+    c:(1-r)*st.pF.c + r*st.pS.c,
+    o:(1-r)*st.pF.o + r*st.pS.o
+  };
+}
+function runLoop(rounds,S0,st,collect){
+  // one context loop: returns token buckets + peak ctx + per-round cost array
+  const hit=hitRate(st.order,st.aff), p=prices(st);
+  let ctx=S0, cached=0, fresh=S0, think=0, out=0, peak=S0, justComp=false;
+  const per=[];
+  // initial system prompt is fresh once
+  for(let t=1;t<=rounds;t++){
+    const prompt=ctx+st.R;
+    const h=justComp?0:hit; justComp=false;
+    cached+=ctx*h;
+    fresh+=st.R+ctx*(1-h);
+    const mult=1+(st.k-1)*HARD_FRAC;        // best-of-k on hard fraction
+    think+=st.think*mult;
+    out+=st.A*mult;
+    peak=Math.max(peak,prompt);
+    ctx+=st.R+st.A;
+    if(st.comp&&ctx>COMP_CAP){ctx=Math.round(COMP_CAP*COMP_KEEP);justComp=true;}
+    if(collect)per.push({cached,fresh,think,out});
+  }
+  return {cached,fresh,think,out,peak,per};
+}
+function simulate(st,collect){
+  const p=prices(st);
+  let r;
+  if(!st.dec){
+    r=runLoop(st.T,st.S,st,collect);
+  }else{
+    // subagents: split rounds across NSUB isolated contexts
+    const each=Math.ceil(st.T/NSUB);
+    const sub=runLoop(each,SSUB,st,false);
+    // orchestrator: NSUB dispatch/reconcile turns over a thin context
+    const ost={...st,R:SUM,A:AORCH,think:Math.min(st.think,1024),k:1};
+    const orch=runLoop(NSUB,st.S,ost,false);
+    r={cached:sub.cached*NSUB+orch.cached, fresh:sub.fresh*NSUB+orch.fresh,
+       think:sub.think*NSUB+orch.think, out:sub.out*NSUB+orch.out,
+       peak:Math.max(sub.peak,orch.peak), per:null};
+    if(collect){ // approximate cumulative evenly across T rounds
+      r.per=[];const tot=cost(r,p);
+      for(let t=1;t<=st.T;t++)r.per.push({frac:t/st.T});
+    }
+  }
+  r.cost=cost(r,p);
+  return r;
+}
+function cost(r,p){return (r.fresh*p.i + r.cached*p.c + (r.think+r.out)*p.o)/1e6;}
+function naiveState(st){
+  return {...st,order:false,aff:false,comp:false,dec:false,think:4096,k:1,route:0};
+}
+
+/* ---------- render ---------- */
+const fmtTok=n=>n>=1e6?(n/1e6).toFixed(1)+'M':n>=1000?(n/1000).toFixed(n>=100000?0:1)+'K':Math.round(n);
+const fmt$=n=>n>=100?'$'+n.toFixed(0):n>=10?'$'+n.toFixed(1):'$'+n.toFixed(2);
+function bar(el,lab,r){
+  const tot=r.cached+r.fresh+r.think+r.out;
+  el.innerHTML='<div class="k-cached" style="width:'+(r.cached/tot*100)+'%"></div>'
+    +'<div class="k-fresh" style="width:'+(r.fresh/tot*100)+'%"></div>'
+    +'<div class="k-think" style="width:'+(r.think/tot*100)+'%"></div>'
+    +'<div class="k-out" style="width:'+(r.out/tot*100)+'%"></div>';
+  lab.textContent=fmtTok(tot)+' tokens · '+fmt$(r.cost);
+}
+function drawChart(d,n,st){
+  const W=980,H=330,PL=56,PR=20,PT=18,PB=44;
+  const p=prices(st), pn=prices(naiveState(st));
+  const dc=[],nc=[];
+  if(d.per&&!st.dec){d.per.forEach(x=>dc.push(cost(x,p)));}
+  else{for(let t=1;t<=st.T;t++)dc.push(d.cost*t/st.T);}
+  n.per.forEach(x=>nc.push(cost(x,pn)));
+  const maxY=Math.max(nc[nc.length-1],dc[dc.length-1])*1.08||1;
+  const X=t=>PL+(t-1)/Math.max(st.T-1,1)*(W-PL-PR);
+  const Y=v=>H-PB-(v/maxY)*(H-PT-PB);
+  const path=a=>a.map((v,i)=>(i?'L':'M')+X(i+1).toFixed(1)+' '+Y(v).toFixed(1)).join(' ');
+  const ticks=[0,.25,.5,.75,1].map(f=>{const v=maxY*f;
+    return '<line x1="'+PL+'" y1="'+Y(v)+'" x2="'+(W-PR)+'" y2="'+Y(v)+'" stroke="#F0F0F0"/>'
+      +'<text x="'+(PL-8)+'" y="'+(Y(v)+4)+'" text-anchor="end" font-size="11.5" fill="#6E6E6E">'+fmt$(v)+'</text>';}).join('');
+  $('chart').innerHTML='<g font-family="Inter,Helvetica Neue,Segoe UI,sans-serif">'+ticks
+    +'<path d="'+path(nc)+'" fill="none" stroke="#9A9A9A" stroke-width="3" stroke-dasharray="7 6"/>'
+    +'<path d="'+path(dc)+'" fill="none" stroke="#0A0A0A" stroke-width="3.6"/>'
+    +'<text x="'+(W-PR-4)+'" y="'+(Y(nc[nc.length-1])-8)+'" text-anchor="end" font-size="12.5" fill="#7A7A7A" font-weight="700">naive</text>'
+    +'<text x="'+(W-PR-4)+'" y="'+(Y(dc[dc.length-1])+16)+'" text-anchor="end" font-size="12.5" fill="#0A0A0A" font-weight="700">your design</text>'
+    +'<line x1="'+PL+'" y1="'+(H-PB)+'" x2="'+(W-PR)+'" y2="'+(H-PB)+'" stroke="#C9CEDF"/>'
+    +'<text x="'+((PL+W-PR)/2)+'" y="'+(H-12)+'" text-anchor="middle" font-size="12" fill="#6E6E6E">round</text></g>';
+}
+function recs(st,base){
+  const list=[];
+  const test=(cond,patch,name,desc)=>{
+    if(!cond){list.push({name,desc,save:0,done:true});return;}
+    const c=simulate({...st,...patch},false).cost;
+    list.push({name,desc,save:Math.max(base-c,0),done:false});
+  };
+  test(!st.order,{order:true},'Adopt stable-prefix, append-only ordering','Move volatile content out of the head of the prompt; never rewrite history mid-session. The single biggest cache lever.');
+  test(!st.aff,{aff:true},'Pin session affinity','Route turns to the worker (or provider cache scope) holding the session\u2019s KV. Without it, ordering alone recovers only part of the hit rate.');
+  test(!st.comp&&(st.S+st.T*(st.R+st.A))>COMP_CAP,{comp:true},'Add a compaction policy','Summarise superseded plans and stale tool output above 16K. What the agent may forget is a product decision \u2014 the engine can\u2019t make it.');
+  test(!st.dec&&st.T>=8,{dec:true},'Decompose to subagents','Isolated short contexts reporting summaries to a thin orchestrator \u2014 stops context \u00d7 turns growth for long sessions.');
+  test(st.think>1024,{think:1024},'Default effort low, escalate on gate failure','Accuracy improves sub-linearly with thinking budget; sweep for the knee instead of running high everywhere.');
+  test(st.k>1,{k:1},'Reserve best-of-k','Multiplying thinking and output by k on hard rounds must be earned by a verifier signal, not a default.');
+  test(st.route<0.5,{route:Math.min(st.route+0.3,0.9)},'Route more rounds to the small model','Classification, extraction and formatting rounds rarely need the frontier tier \u2014 IInferenceRouter\u2019s job.');
+  test(st.R>800,{R:Math.max(Math.round(st.R*0.5),200)},'Halve tool-result size at the source','Filter and project tool output before it enters context \u2014 every result is prefill plus KV rent for the session\u2019s life.');
+  test(st.A>150,{A:150},'Cap visible output','Output prices at 3\u20135\u00d7 input; schema-constrained, terse responses are a cost control, not a style choice.');
+  list.sort((a,b)=>b.save-a.save);
+  $('recs').innerHTML=list.map(r=>'<div class="rec'+(r.done?' done':'')+'">'
+    +'<div class="save'+(r.save<0.005?' zero':'')+'">'+(r.done?'—':('−'+fmt$(r.save)))+'</div>'
+    +'<div><div class="rn">'+r.name+'</div><div class="rd">'+r.desc+'</div></div></div>').join('');
+}
+function update(){
+  const d=simulate(state,true), n=simulate(naiveState(state),true);
+  $('hCost').innerHTML=fmt$(d.cost)+'<small> /session</small>';
+  $('hCost2').textContent=fmt$(d.cost*1000)+' per 1,000 sessions';
+  $('hNaive').innerHTML=fmt$(n.cost)+'<small> /session</small>';
+  const m=n.cost/Math.max(d.cost,1e-9);
+  $('hMult').textContent=(m>=10?m.toFixed(0):m.toFixed(1))+'×';
+  $('hSaved').textContent=fmt$((n.cost-d.cost)*1000)+' saved per 1,000 sessions';
+  bar($('bD'),$('bDlab'),d); bar($('bN'),$('bNlab'),n);
+  $('pk1').textContent=fmtTok(d.peak);
+  $('pk2').textContent=(d.peak*320/1024/1024).toFixed(1)+' GB';
+  drawChart(d,n,state);
+  recs(state,d.cost);
+}
+
+/* ---------- wiring ---------- */
+function bindRange(id,key,outId,fmt){
+  $(id).addEventListener('input',e=>{state[key]=+e.target.value;$(outId).textContent=fmt(+e.target.value);update();});
+}
+bindRange('sT','T','oT',v=>v);
+bindRange('sS','S','oS',v=>(v/1000).toFixed(1)+'K tok');
+bindRange('sR','R','oR',v=>(v/1000).toFixed(1)+'K tok');
+bindRange('sA','A','oA',v=>v+' tok');
+bindRange('sK','k','oK',v=>v==1?'off':'k = '+v);
+$('sRt').addEventListener('input',e=>{state.route=+e.target.value/100;$('oRt').textContent=e.target.value+'%';update();});
+[['tOrder','order'],['tAff','aff'],['tComp','comp'],['tDec','dec']].forEach(([id,key])=>{
+  $(id).addEventListener('click',function(){state[key]=!state[key];this.classList.toggle('on',state[key]);this.setAttribute('aria-checked',state[key]);update();});
+});
+document.querySelectorAll('#effSegs .seg').forEach(b=>{
+  b.addEventListener('click',()=>{
+    document.querySelectorAll('#effSegs .seg').forEach(q=>q.classList.remove('on'));
+    b.classList.add('on');state.think=+b.dataset.v;update();
+  });
+});
+['pFi','pFc','pFo','pSi','pSc','pSo'].forEach(id=>{
+  $(id).addEventListener('input',()=>{
+    state.pF={i:+$('pFi').value||0,c:+$('pFc').value||0,o:+$('pFo').value||0};
+    state.pS={i:+$('pSi').value||0,c:+$('pSc').value||0,o:+$('pSo').value||0};
+    update();
+  });
+});
+update();
+</script>
+</body>
+</html>
