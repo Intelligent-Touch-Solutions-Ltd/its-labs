@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ITS Labs — Intelligent Touch Solutions</title>
+<style>
+  :root{--touch-a:#7B2FF7;--touch-b:#F72F8E;--touch-c:#F7A82F}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:Inter,'Helvetica Neue','Segoe UI',system-ui,sans-serif;background:#0A0A0A;color:#fff;min-height:100vh;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+  body::after{content:"";position:absolute;right:-160px;top:-160px;width:520px;height:520px;border-radius:50%;background:radial-gradient(circle at 32% 32%,rgba(247,47,142,.34) 0%,rgba(123,47,247,.20) 42%,rgba(247,168,47,0) 72%);pointer-events:none}
+  main{max-width:720px;padding:40px 28px;position:relative}
+  .eyebrow{font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--touch-a);margin-bottom:14px}
+  h1{font-size:clamp(30px,5vw,46px);line-height:1.1;letter-spacing:-0.01em;margin-bottom:14px}
+  p{color:#C9C9C9;font-size:17px;max-width:600px;margin-bottom:34px}
+  .tool{display:block;background:#161616;border:1px solid #2E2E2E;border-radius:12px;padding:20px 22px;color:#fff;text-decoration:none;transition:border-color .15s}
+  .tool:hover{border-color:var(--touch-a)}
+  .tool b{display:block;font-size:18px;margin-bottom:4px}
+  .tool span{color:#9A9A9A;font-size:14px}
+  footer{margin-top:40px;font-size:12.5px;color:#6E6E6E}
+  footer a{color:#9A9A9A}
+</style>
+</head>
+<body>
+<main>
+  <div class="eyebrow">ITS Labs</div>
+  <h1>Interactive companions to <em>The Stack Above the Stack</em></h1>
+  <p>Instruments from the workshop — tools that make the application layer of AI-native systems legible and priceable. Illustrative models, editable assumptions, nothing collected.</p>
+  <a class="tool" href="/token-ledger/">
+    <b>The Token Ledger</b>
+    <span>Price your traffic shape before you build it — context ordering, compaction, effort budgets and routing, costed live against the naive build.</span>
+  </a>
+  <footer>Intelligent Touch Solutions Ltd · <a href="https://intelligenttouch-solutions.com">intelligenttouch-solutions.com</a></footer>
+</main>
+</body>
+</html>
